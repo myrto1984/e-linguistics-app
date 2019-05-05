@@ -1,0 +1,30 @@
+.gitkeep
+.gitignore~
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
+
+.idea/
+.DS_Store
+Thumbs.db
+
+# compiled output
+dist/
+tmp/
+out-tsc/
+
+# dependencies
+node_modules/
