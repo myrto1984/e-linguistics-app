@@ -1,8 +1,8 @@
 # coding=utf-8
-from flask import Flask, jsonify, request
+from flask import Flask
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-# from .sessionlogs import sessionsController
-# from .sessionlogs import storyController
+from .cltk import nltkController
+from .cltk import cltkController

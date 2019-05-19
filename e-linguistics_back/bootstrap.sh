@@ -1,4 +1,6 @@
 #!/bin/bash
+export NLTK_DATA=../e-linguistics_data/
+
 export FLASK_APP=./src/main.py
 
 # TODO:: DISABLE IN PRODUCTION

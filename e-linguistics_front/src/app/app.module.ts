@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainService } from "./services/main.service";
 import { HttpClientModule } from "@angular/common/http";
+import { ReactiveFormsModule } from "@angular/forms";
+import { NltkService } from "./services/nltk.service";
 
 @NgModule({
   declarations: [
@@ -12,11 +14,13 @@ import { HttpClientModule } from "@angular/common/http";
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule
   ],
   providers: [
-      MainService
+      MainService,
+      NltkService
   ],
   bootstrap: [AppComponent]
 })

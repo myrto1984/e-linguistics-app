@@ -28,3 +28,6 @@ out-tsc/
 
 # dependencies
 node_modules/
+
+# nltk_data
+e-linguistics_data/
