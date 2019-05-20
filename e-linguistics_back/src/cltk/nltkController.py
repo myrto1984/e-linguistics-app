@@ -38,9 +38,16 @@ def find_synset_in_grc():
     return jsonify(output)
 
 
-@app.route(endpoint + 'find_synset_in_eng', methods=['POST'])
+@app.route(endpoint + 'find_synsets_in_eng', methods=['POST'])
 def find_synset_in_eng():
     req_data = request.get_json()
     word = str(req_data['search_word'])
 
-    return jsonify("{:08d}".format(wn.synset(word).offset()) + '-' + str(wn.synset(word).pos()))
+    output = []
+    for i, w in enumerate(wn.synsets(word)):
+        output.append({"synset_offset": "{:08d}".format(w.offset()) + '-' + str(w.pos()),
+                       "wn_synset": str(w.name()),
+                       "definition": str(w.definition())})
+
+    # return jsonify("{:08d}".format(wn.synset(word).offset()) + '-' + str(wn.synset(word).pos()))
+    return jsonify(output)
