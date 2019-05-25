@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MainService } from "./services/main.service";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { NltkService } from "./services/nltk.service";
 
 @Component({
   selector: 'app-root',
   template: `
-    <!--The content below is only a placeholder and can be replaced.-->
     <div style="text-align:center">
       <h1 *ngIf="title">
         {{title}}
@@ -18,10 +16,11 @@ import { NltkService } from "./services/nltk.service";
         </form>
       </div>
       <div *ngIf="result">
-        <ul>
-          <li *ngFor="let w of result">{{ w }}</li>
-        </ul>
+        <span *ngFor="let w of result"><a (click)="getLemma(w)">{{ w }} </a></span>
       </div>
+    </div>
+    <div *ngIf="perseus_lexicon_HTML">
+      <iframe [src]="perseus_lexicon_HTML | sanitize_url" style="width: 90%; height: 900px; border: 1px solid black"></iframe>
     </div>
 <!--    <router-outlet></router-outlet>-->
   `,
@@ -31,21 +30,13 @@ export class AppComponent implements OnInit {
   title: string;
   myForm: FormGroup;
   result: string[];
+  perseus_lexicon_HTML: any;
 
-  constructor(private mainService: MainService,
-              private nltkService: NltkService,
+  constructor(private nltkService: NltkService,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.getWelcome();
     this.initForm();
-  }
-
-  getWelcome() {
-    this.mainService.getWelcome().subscribe(
-        msg => this.title = msg,
-        er => console.log(er)
-    );
   }
 
   initForm() {
@@ -59,6 +50,10 @@ export class AppComponent implements OnInit {
           er => console.log(er)
       );
     }
+  }
+
+  getLemma(word: string) {
+    this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
   }
 
 }

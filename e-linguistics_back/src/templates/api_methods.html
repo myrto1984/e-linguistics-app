@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>e_Linguistics App - API Methods</title>
+</head>
+<body>
+    <div>
+        <div style="margin-bottom: 50px;">
+            <h3>/nltk/tokenize</h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;"><b>example body:</b></td>
+                    <td>{<br><span style="padding-left: 10px">"input_text": <em>"some sentence that needs tokenizing."</em></span><br>}</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>splits sentence into individual words and returns them as a string array</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td>['some', 'sentence', 'that', 'needs', 'tokenizing', '.']</td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div style="margin-bottom: 50px;">
+            <h3>/nltk/find/&#60;lang&#62;/synsets</h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;"><b>example body:</b></td>
+                    <td>{<br><span style="padding-left: 10px">"search_word": <em>"word"</em></span><br>}</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>searches for a word inside the wordnet with language code &#60;lang&#62; and returns array of info for each synset found</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;"><b>example response:</b></td>
+                    <td>[<br>
+                        <span style="padding-left: 5px">{</span><br>
+                        <span style="padding-left: 10px">"synset_offset": <em>"synset offset and type combination, used as id"</em></span><br>
+                        <span style="padding-left: 10px">"wn_synset": <em>"synset name"</em></span><br>
+                        <span style="padding-left: 10px">"definition": <em>"synset definition"</em></span><br>
+                        <span style="padding-left: 5px">}, ...</span><br>
+                        ]<br>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div style="margin-bottom: 50px;">
+            <h3>/cltk/lemmatize</h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;"><b>example body:</b></td>
+                    <td>{<br><span style="padding-left: 10px">"input_text": <em>"word"</em></span><br>}</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>returns the initial form of the word (or words in a sentence), that can be found in a dictionary</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td><em>lemma</em></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+    </div>
+</body>
+</html>

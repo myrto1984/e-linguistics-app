@@ -19,7 +19,9 @@ def tokenize():
     input_text = input_text.replace('\t', ' ')
     input_text = input_text.replace('\r\n', ' ')
     input_text = input_text.replace('\r\t', ' ')
-    input_text = input_text.replace('  ', ' ')
+
+    while input_text.find('  ') > -1:
+        input_text = input_text.replace('  ', ' ')
 
     output = input_text.split(' ')
 
@@ -27,13 +29,14 @@ def tokenize():
 
 
 @app.route(endpoint + 'find/<lang>/synsets', methods=['POST'])
-def find_synsets(lang):
+def find_synsets(lang='eng'):
     req_data = request.get_json()
     word = str(req_data['search_word'])
-    print('PRINTING: ' + lang)
 
     output = []
     for i, w in enumerate(wn.synsets(word, lang=lang)):
-        output.append({"wn_synset": str(w.name()), "definition": str(w.definition())})
+        output.append({"synset_offset": "{:08d}".format(w.offset()) + '-' + str(w.pos()),
+                       "wn_synset": str(w.name()),
+                       "definition": str(w.definition())})
 
     return jsonify(output)

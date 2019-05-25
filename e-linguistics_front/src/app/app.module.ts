@@ -1,16 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MainService } from "./services/main.service";
 import { HttpClientModule } from "@angular/common/http";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NltkService } from "./services/nltk.service";
+import { SanitizeUrlPipe } from "./pipes/url-santizer.pipe";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SanitizeUrlPipe
   ],
   imports: [
     BrowserModule,
@@ -19,7 +19,6 @@ import { NltkService } from "./services/nltk.service";
     AppRoutingModule
   ],
   providers: [
-      MainService,
       NltkService
   ],
   bootstrap: [AppComponent]

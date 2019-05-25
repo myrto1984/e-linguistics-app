@@ -25,4 +25,5 @@ nltk.download('wordnet')
 # link to perseus lexicon
 # http://www.perseus.tufts.edu/hopper/morph?l={word}&la=gr
 
-
+# link to our target inscriptions (no. 40-360)
+# https://inscriptions.packhum.org/text/190735?bookid=265&location=789
