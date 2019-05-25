@@ -12,4 +12,4 @@ def lemmatize():
     input_text = req_data['input_text']
     lemmatizer = LemmaReplacer('greek')
 
-    return jsonify(lemmatizer.lemmatize(input_text, return_raw=True))
+    return jsonify(lemmatizer.lemmatize(input_text))
