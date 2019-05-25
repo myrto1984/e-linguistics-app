@@ -26,27 +26,14 @@ def tokenize():
     return jsonify(output)
 
 
-@app.route(endpoint + 'find_synset_in_grc', methods=['POST'])
-def find_synset_in_grc():
+@app.route(endpoint + 'find/<lang>/synsets', methods=['POST'])
+def find_synsets(lang):
     req_data = request.get_json()
     word = str(req_data['search_word'])
+    print('PRINTING: ' + lang)
 
     output = []
-    for i, w in enumerate(wn.synsets(word, lang='grc')):
+    for i, w in enumerate(wn.synsets(word, lang=lang)):
         output.append({"wn_synset": str(w.name()), "definition": str(w.definition())})
-
-    return jsonify(output)
-
-
-@app.route(endpoint + 'find_synsets_in_eng', methods=['POST'])
-def find_synset_in_eng():
-    req_data = request.get_json()
-    word = str(req_data['search_word'])
-
-    output = []
-    for i, w in enumerate(wn.synsets(word)):
-        output.append({"synset_offset": "{:08d}".format(w.offset()) + '-' + str(w.pos()),
-                       "wn_synset": str(w.name()),
-                       "definition": str(w.definition())})
 
     return jsonify(output)
