@@ -49,5 +49,4 @@ def find_synset_in_eng():
                        "wn_synset": str(w.name()),
                        "definition": str(w.definition())})
 
-    # return jsonify("{:08d}".format(wn.synset(word).offset()) + '-' + str(wn.synset(word).pos()))
     return jsonify(output)
