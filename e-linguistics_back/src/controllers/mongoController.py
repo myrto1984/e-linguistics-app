@@ -1,5 +1,4 @@
 import pymongo
-import json
 from flask import request, jsonify
 from src import app
 
@@ -15,6 +14,13 @@ def inscription():
     db = client.e_linguistics_db
     if request.method == 'GET':
         inscr_id = request.args.get('id', '')
-        inscription = db.inscriptions.find({ "phID": inscr_id })
+        inscr = list(db.inscriptions.find({"phID": inscr_id}))
         client.close()
-        return inscription
+        return jsonify(inscr)
+    elif request.method == 'POST':
+        new_inscr = db.inscriptions.insert(request.get_json())
+        client.close()
+        return str(new_inscr)
+    client.close()
+    return jsonify({})
+
