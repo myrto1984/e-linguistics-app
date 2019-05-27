@@ -1,5 +1,6 @@
 import pymongo
-from bson.json_util import dumps
+from bson import json_util, BSON, _utf_8_encode, decode_all
+from bson.codec_options import CodecOptions
 import json
 from flask import request, jsonify
 from src import app
@@ -17,11 +18,13 @@ def inscription():
     if request.method == 'GET':
         inscr_id = request.args.get('phID', '')
         inscr = db.inscriptions.find_one({"phID": inscr_id})
-        client.close()
-        return str(inscr)
+        inscr['_id'] = str(inscr['_id'])
+        return jsonify(inscr)
     elif request.method == 'POST':
         # example body:
-        # { "inscription_text" : "...", "phID" : "PH190736", "dateFrom" : "-340", "dateTo" : "-340", "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...", "bibliography" : "....", "words" : ["w1_synsetId", "w2_synsetId", ...] }
+        # { "inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
+        # "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...",
+        # "bibliography" : "....", "words" : ["w1_synsetId", "w2_synsetId", ...] }
         if request.get_json():
             new_inscr = db.inscriptions.insert(request.get_json())
             client.close()
