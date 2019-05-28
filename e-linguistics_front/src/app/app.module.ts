@@ -9,6 +9,7 @@ import {SanitizeUrlPipe} from "./pipes/url-santizer.pipe";
 import {HomeComponent} from "./pages/home/home.component";
 import {HeaderComponent} from "./pages/persistent/header.component";
 import {FooterComponent} from "./pages/persistent/footer.component";
+import {CltkService} from "./services/cltk.service";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import {FooterComponent} from "./pages/persistent/footer.component";
     AppRoutingModule,
   ],
   providers: [
-    NltkService
+    NltkService,
+    CltkService
   ],
   bootstrap: [
     AppComponent

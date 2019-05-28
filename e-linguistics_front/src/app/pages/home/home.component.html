@@ -1,20 +1,30 @@
 <div style="text-align:center">
+  <div class="offset-3 col-6 badge-info" *ngIf="errorMassage">
+    {{errorMassage}}
+  </div>
   <div *ngIf="myForm">
     <form class="offset-3 col-6" [formGroup]="myForm">
       <div class="form-group">
         <label for="input">Input original text here: </label>
-        <textarea class="form-control" id="input" formControlName="input_text" rows="5"></textarea>
+        <textarea class="form-control" id="input" formControlName="input_text" rows="4"></textarea>
         <div class="m-1">
           <button class="btn btn-outline-secondary" type="submit" (click)="sendTextToBack()">Search</button>
         </div>
       </div>
     </form>
   </div>
-  <div class="col-12" *ngIf="result">
-    <span *ngFor="let w of result"><a (click)="getLemma(w)">{{ w }} </a></span>
+  <div class="" *ngIf="result">
+    <div>
+      <span class="" *ngFor="let w of result"><a (click)="getLemma(w)" style="cursor: pointer">{{ w }} </a></span>
+    </div>
+    <div>
+      <span class="" *ngFor="let l of lemmas"><a (click)="getLemma(l)" style="cursor: pointer">{{ l }} </a></span>
+    </div>
   </div>
 </div>
-<div class="" *ngIf="perseus_lexicon_HTML" style="height: 100vh">
-  <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url"
-          style="border: 1px solid black"></iframe>
+<div *ngIf="findResults && findResults.length > 0">
+  <pre>{{findResults | json}}</pre>
+</div>
+<div class="" *ngIf="perseus_lexicon_HTML" style="height: 55vh">
+  <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url" style="border: 1px solid black"></iframe>
 </div>

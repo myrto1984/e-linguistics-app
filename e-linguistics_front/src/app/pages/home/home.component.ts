@@ -1,6 +1,8 @@
 import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {NltkService} from "../../services/nltk.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {findResults, NltkService} from "../../services/nltk.service";
+import {CltkService} from "../../services/cltk.service";
+import {zip} from "rxjs";
 
 @Component({
   selector: 'app-home',
@@ -8,11 +10,15 @@ import {NltkService} from "../../services/nltk.service";
 })
 
 export class HomeComponent implements OnInit {
+  errorMassage: string;
   myForm: FormGroup;
   result: string[];
+  lemmas: string[];
+  findResults: findResults[];
   perseus_lexicon_HTML: any;
 
   constructor(private nltkService: NltkService,
+              private cltkService: CltkService,
               private fb: FormBuilder) {
   }
 
@@ -21,19 +27,51 @@ export class HomeComponent implements OnInit {
   }
 
   initForm() {
-    this.myForm = this.fb.group({input_text: ['']});
+    this.myForm = this.fb.group({input_text: ['', Validators.required]});
   }
 
   sendTextToBack() {
+    this.errorMassage = '';
     if (this.myForm.valid) {
-      this.nltkService.tokenizeText(this.myForm.value).subscribe(
-        res => this.result = res,
-        er => console.log(er)
+      zip(
+          this.nltkService.tokenizeText(this.myForm.value),
+          this.cltkService.lemmatizeText(this.myForm.value)
+      ).subscribe(
+          res => {
+            this.result = res[0];
+            this.lemmas = res[1];
+          },
+          er => console.log(er)
       );
+    }
+    // if (this.myForm.valid) {
+    //   this.nltkService.tokenizeText(this.myForm.value).subscribe(
+    //     res => this.result = res,
+    //     er => console.log(er)
+    //   );
+    //   this.cltkService.lemmatizeText(this.myForm.value).subscribe(
+    //       res => this.lemmas = res,
+    //       er => console.log(er)
+    //   )
+    // }
+    else {
+      this.errorMassage = 'Please put an inscription in text area';
     }
   }
 
   getLemma(word: string) {
-    this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
+    this.nltkService.find(word).subscribe(
+        res => this.findResults = res,
+        er => console.log(er),
+        () => {
+          if (this.findResults.length === 0) {
+            this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
+          }
+          else {
+            this.perseus_lexicon_HTML = '';
+          }
+        }
+    );
+
   }
 }
