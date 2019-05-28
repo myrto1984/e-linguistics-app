@@ -10,8 +10,8 @@ corpus_importer = CorpusImporter('greek')
 corpus_importer.import_corpus('greek_models_cltk')
 
 
-# change default NLTK_DATA
-# export NLTK_DATA=../e-linguistics_data/
+# change default NLTK_DATA to point inside the static folder
+# export NLTK_DATA=./src/static/e-linguistics_data/
 import nltk
 nltk.download('wordnet')
 # nltk.download('omw')

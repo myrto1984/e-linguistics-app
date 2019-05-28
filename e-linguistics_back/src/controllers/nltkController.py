@@ -11,19 +11,22 @@ def tokenize():
     req_data = request.get_json()
     input_text = str(req_data['input_text'])
 
-    input_text = input_text.replace('.', ' .')
-    input_text = input_text.replace(',', ' ,')
-    input_text = input_text.replace('[', '')
-    input_text = input_text.replace(']', '')
-    input_text = input_text.replace('\n', ' ')
-    input_text = input_text.replace('\t', ' ')
-    input_text = input_text.replace('\r\n', ' ')
-    input_text = input_text.replace('\r\t', ' ')
+    output = []
+    if input_text:
+        input_text = input_text.replace('.', ' .')
+        input_text = input_text.replace(',', ' ,')
+        input_text = input_text.replace('[', '')
+        input_text = input_text.replace(']', '')
+        input_text = input_text.replace('\n', ' ')
+        input_text = input_text.replace('\t', ' ')
+        input_text = input_text.replace('\r\n', ' ')
+        input_text = input_text.replace('\r\t', ' ')
+        input_text = input_text.replace('vacat', '')
 
-    while input_text.find('  ') > -1:
-        input_text = input_text.replace('  ', ' ')
+        while input_text.find('  ') > -1:
+            input_text = input_text.replace('  ', ' ')
 
-    output = input_text.split(' ')
+        output = input_text.split(' ')
 
     return jsonify(output)
 
@@ -34,9 +37,10 @@ def find_synsets(lang='eng'):
     word = str(req_data['search_word'])
 
     output = []
-    for i, w in enumerate(wn.synsets(word, lang=lang)):
-        output.append({"synset_offset": "{:08d}".format(w.offset()) + '-' + str(w.pos()),
-                       "wn_synset": str(w.name()),
-                       "definition": str(w.definition())})
+    if word:
+        for i, w in enumerate(wn.synsets(word, lang=lang)):
+            output.append({"synset_offset": "{:08d}".format(w.offset()) + '-' + str(w.pos()),
+                           "wn_synset": str(w.name()),
+                           "definition": str(w.definition())})
 
     return jsonify(output)

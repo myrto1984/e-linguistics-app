@@ -1,6 +1,7 @@
 import pymongo
 from flask import request, jsonify
 from src import app
+import os
 
 
 endpoint = '/db/'
@@ -22,14 +23,18 @@ def inscription():
         return jsonify(inscr)
     elif request.method == 'POST':
         # example body:
-        # { "inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
-        # "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...",
-        # "bibliography" : "....", "words" : ["w1_synsetId", "w2_synsetId", ...] }
+        # {"inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
+        #  "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...",
+        #  "bibliography" : "....", "words" : ["w1", "w2", ...]}
         if request.get_json():
-            # TODO:: CONVERT TO UPDATE
-            new_inscr = db.inscriptions.insert(request.get_json())
+            new_inscr = request.get_json()
+            new_id = db[inscr_col].insert(new_inscr)
+            if new_id:
+                words = new_inscr['words']
+                for w in words:
+                    db[inscr_col].update_one({"grc_word": w}, {"inscrs": {"$addToSet": new_id}})
             client.close()
-            return jsonify(str(new_inscr))
+            return jsonify(str(new_id))
     client.close()
     return jsonify({})
 
@@ -39,22 +44,22 @@ def word():
     client = pymongo.MongoClient(mongo_endpoint, mongo_port)
     db = client[db_name]
     if request.method == 'GET':
-        word_id = request.args.get('synsetId', '')
-        word = db[inscr_col].find_one({"synsetId": word_id})
-        word['_id'] = str(word['_id'])
+        input_word = request.args.get('grcWord', '')
+        grc_word = db[inscr_col].find_one({"grc_word": input_word})
+        grc_word['_id'] = str(grc_word['_id'])
         return jsonify(word)
     elif request.method == 'POST':
-        # example body:
-        # { "synsetId" : "...", "synset" : "....", "definition" : "...", "eng_word" : "...",
-        # "grc_word" : "w1" }
+        # example body: {"grc_word" : "word", "eng_wn_synsets": [{"synsetId" : "...", "synset" : "..."}] }
         if request.get_json():
             new_word = request.get_json()
-            result = db[words_col].update({"synsetId": new_word['synsetId']},
-                                          {"synsetId": new_word['synsetId'],
-                                           "synset": new_word['synset'],
-                                           "eng_word": new_word['eng_word'],
-                                           "grc_words": {"$addToSet": new_word['grc_word']}})
+            result = db[words_col].update({"grc_word": new_word['grc_word']}, new_word, True)
+            if not result['updatedExisting']:
+                # wn = open('wn-data-grc.tab', 'a')
+                wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
+                for w in list(new_word['eng_wn_synsets']):
+                    wn.write(w['synsetId'] + '\tgrc:lemma\t' + new_word['grc_word'])
+                wn.close()
             client.close()
-            return str(result)
+            return jsonify(result['ok'])
     client.close()
     return jsonify({})

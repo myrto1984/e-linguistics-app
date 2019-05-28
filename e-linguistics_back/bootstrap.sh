@@ -1,5 +1,5 @@
 #!/bin/bash
-export NLTK_DATA=../e-linguistics_data/
+export NLTK_DATA=./src/static/e-linguistics_data/
 
 export FLASK_APP=./src/main.py
 

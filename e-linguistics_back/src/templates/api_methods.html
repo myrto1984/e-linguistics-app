@@ -116,7 +116,7 @@
 		        <span style="padding-left: 10px;">"general_type" : "<em>αναθηματική</em>",</span><br>
 		        <span style="padding-left: 10px;">"provenance" : "...",</span><br>
 		        <span style="padding-left: 10px;">"bibliography" : "....",</span><br>
-		        <span style="padding-left: 10px;">"words" : ["w1_synsetId", "w2_synsetId", ...]</span><br>}
+		        <span style="padding-left: 10px;">"words" : ["w1", "w2", ...]</span><br>}
 		    </td>
                 </tr>
                 <tr>
@@ -131,7 +131,7 @@
             <hr>
         </div>
     	<div style="margin-bottom: 50px;">
-            <h3>/db/word?synsetId=<em>synsetId</em></h3>
+            <h3>/db/word?grcWord=<em>synsetId</em></h3>
             <table border="1" cellpadding="10">
                 <tr>
                     <td><b>method:</b></td>
@@ -159,10 +159,8 @@
                     <td style="vertical-align: top;"><b>example body:</b></td>
 		    <td>
 		        {<br>
-		        <span style="padding-left: 10px;">"synsetId" : "...",</span><br>
-		        <span style="padding-left: 10px;">"synset" : "...",</span><br>
-		        <span style="padding-left: 10px;">"eng_word" : "...",</span><br>
-                <span style="padding-left: 10px;">"grc_word" : "<em>new_word</em>"</span><br>}
+		        <span style="padding-left: 10px;">"grc_word" : "...",</span><br>
+                <span style="padding-left: 10px;">"eng_wn_synsets" : [<em>{"synsetId" : "...", "synset" : "...."}</em>, ...]</span><br>}
 		    </td>
                 </tr>
                 <tr>
