@@ -79,7 +79,7 @@
             </table>
             <hr>
         </div>
-	<div style="margin-bottom: 50px;">
+    	<div style="margin-bottom: 50px;">
             <h3>/db/inscription?phID=<em>phid</em></h3>
             <table border="1" cellpadding="10">
                 <tr>
@@ -97,7 +97,7 @@
             </table>
             <hr>
         </div>
-	<div style="margin-bottom: 50px;">
+    	<div style="margin-bottom: 50px;">
             <h3>/db/inscription</h3>
             <table border="1" cellpadding="10">
                 <tr>
@@ -107,21 +107,67 @@
                 <tr>
                     <td style="vertical-align: top;"><b>example body:</b></td>
 		    <td>
-		      {<br>
-		      <span style="padding-left: 10px;">"inscription_text" : "...",</span><br>
-		      <span style="padding-left: 10px;">"phID" : "PH190736",</span><br>
-		      <span style="padding-left: 10px;">"dateFrom" : "-340",</span><br>
-		      <span style="padding-left: 10px;">"dateTo" : "-340",</span><br>
-		      <span style="padding-left: 10px;">"id_in_publication" : "...",</span><br>
-		      <span style="padding-left: 10px;">"general_type" : "<em>αναθηματική</em>",</span><br>
-		      <span style="padding-left: 10px;">"provenance" : "...",</span><br>
-		      <span style="padding-left: 10px;">"bibliography" : "....",</span><br>
-		      <span style="padding-left: 10px;">"words" : ["w1_synsetId", "w2_synsetId", ...]</span><br>}
+		        {<br>
+		        <span style="padding-left: 10px;">"inscription_text" : "...",</span><br>
+		        <span style="padding-left: 10px;">"phID" : "PH190736",</span><br>
+		        <span style="padding-left: 10px;">"dateFrom" : -340,</span><br>
+		        <span style="padding-left: 10px;">"dateTo" : -340,</span><br>
+		        <span style="padding-left: 10px;">"id_in_publication" : "...",</span><br>
+		        <span style="padding-left: 10px;">"general_type" : "<em>αναθηματική</em>",</span><br>
+		        <span style="padding-left: 10px;">"provenance" : "...",</span><br>
+		        <span style="padding-left: 10px;">"bibliography" : "....",</span><br>
+		        <span style="padding-left: 10px;">"words" : ["w1_synsetId", "w2_synsetId", ...]</span><br>}
 		    </td>
                 </tr>
                 <tr>
                     <td><b>description:</b></td>
-                    <td>inserts a new inscription in the database</td>
+                    <td>inserts a new inscription in the inscriptions collection</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td><em>ObjectID</em></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+    	<div style="margin-bottom: 50px;">
+            <h3>/db/word?synsetId=<em>synsetId</em></h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>GET</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>returns a word from the wordnet collection based on the given synsetId</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td><em>Word object</em></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+    	<div style="margin-bottom: 50px;">
+            <h3>/db/word</h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>POST</td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: top;"><b>example body:</b></td>
+		    <td>
+		        {<br>
+		        <span style="padding-left: 10px;">"synsetId" : "...",</span><br>
+		        <span style="padding-left: 10px;">"synset" : "...",</span><br>
+		        <span style="padding-left: 10px;">"eng_word" : "...",</span><br>
+                <span style="padding-left: 10px;">"grc_word" : "<em>new_word</em>"</span><br>}
+		    </td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>inserts a new word in the wordnet collection</td>
                 </tr>
                 <tr>
                     <td><b>example response:</b></td>
