@@ -1,7 +1,6 @@
 import pymongo
 from flask import request, jsonify
 from src import app
-import os
 
 
 endpoint = '/db/'
@@ -25,14 +24,14 @@ def inscription():
         # example body:
         # {"inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
         #  "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...",
-        #  "bibliography" : "....", "words" : ["w1", "w2", ...]}
+        #  "bibliography" : "....", "words" : [ {"word":"w1", "synsets": ["synset1", "synset2"]} ] }
         if request.get_json():
             new_inscr = request.get_json()
             new_id = db[inscr_col].insert(new_inscr)
             if new_id:
                 words = new_inscr['words']
-                for w in words:
-                    db[inscr_col].update_one({"grc_word": w}, {"inscrs": {"$addToSet": new_id}})
+                for w in list(words):
+                    db[words_col].update_one({"grc_word": w["word"]}, {"$push": {"inscrs": {"$each": [new_id]}}})
             client.close()
             return jsonify(str(new_id))
     client.close()
@@ -54,12 +53,11 @@ def word():
             new_word = request.get_json()
             result = db[words_col].update({"grc_word": new_word['grc_word']}, new_word, True)
             if not result['updatedExisting']:
-                # wn = open('wn-data-grc.tab', 'a')
                 wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
                 for w in list(new_word['eng_wn_synsets']):
                     wn.write(w['synsetId'] + '\tgrc:lemma\t' + new_word['grc_word'])
                 wn.close()
             client.close()
-            return jsonify(result['ok'])
+            return jsonify(str(result))
     client.close()
     return jsonify({})
