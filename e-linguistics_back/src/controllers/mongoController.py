@@ -18,8 +18,11 @@ def inscription():
     if request.method == 'GET':
         inscr_id = request.args.get('phID', '')
         inscr = db[inscr_col].find_one({"phID": inscr_id})
-        inscr['_id'] = str(inscr['_id'])
-        return jsonify(inscr)
+        if inscr:
+            inscr['_id'] = str(inscr['_id'])
+            return jsonify(inscr)
+        else:
+            return jsonify({})
     elif request.method == 'POST':
         # example body:
         # {"inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
@@ -44,9 +47,12 @@ def word():
     db = client[db_name]
     if request.method == 'GET':
         input_word = request.args.get('grcWord', '')
-        grc_word = db[inscr_col].find_one({"grc_word": input_word})
-        grc_word['_id'] = str(grc_word['_id'])
-        return jsonify(word)
+        grc_word = db[words_col].find_one({"grc_word": input_word})
+        if grc_word:
+            grc_word['_id'] = str(grc_word['_id'])
+            return jsonify(grc_word)
+        else:
+            return jsonify({})
     elif request.method == 'POST':
         # example body: {"grc_word" : "word", "eng_wn_synsets": [{"synsetId" : "...", "synset" : "..."}] }
         if request.get_json():
