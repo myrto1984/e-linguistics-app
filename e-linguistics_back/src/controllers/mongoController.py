@@ -61,7 +61,7 @@ def word():
             if not result['updatedExisting']:
                 wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
                 for w in list(new_word['eng_wn_synsets']):
-                    wn.write(w['synsetId'] + '\tgrc:lemma\t' + new_word['grc_word'])
+                    wn.write(w['synsetId'] + '\tgrc:lemma\t' + new_word['grc_word'] + '\n')
                 wn.close()
             client.close()
             return jsonify(str(result))
