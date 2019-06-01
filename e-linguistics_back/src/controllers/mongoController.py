@@ -1,5 +1,6 @@
 import pymongo
 from flask import request, jsonify
+from http import HTTPStatus
 from src import app
 
 
@@ -41,6 +42,25 @@ def inscription():
     return jsonify({})
 
 
+@app.route(endpoint + 'inscription/getAll', methods=['GET'])
+def getAllInscriptions():
+    client = pymongo.MongoClient(mongo_endpoint, mongo_port)
+    db = client[db_name]
+    lim = 10
+    off = 0
+    try:
+        if request.args.get('limit', ''):
+            lim = int(request.args.get('limit'))
+        if request.args.get('offset', ''):
+            off = int(request.args.get('offset'))
+        inscrs = list(db[inscr_col].find({}, {"_id": 0}).limit(lim).skip(off))
+        client.close()
+        return jsonify(inscrs)
+    except ValueError:
+        client.close()
+        return jsonify({"error": "Wrong input type!"})
+
+
 @app.route(endpoint + 'word', methods=['POST', 'GET'])
 def word():
     client = pymongo.MongoClient(mongo_endpoint, mongo_port)
@@ -67,3 +87,22 @@ def word():
             return jsonify(str(result))
     client.close()
     return jsonify({})
+
+
+@app.route(endpoint + 'word/getAll', methods=['GET'])
+def getAllWords():
+    client = pymongo.MongoClient(mongo_endpoint, mongo_port)
+    db = client[db_name]
+    lim = 10
+    off = 0
+    try:
+        if request.args.get('limit', ''):
+            lim = int(request.args.get('limit'))
+        if request.args.get('offset', ''):
+            off = int(request.args.get('offset'))
+        words = list(db[words_col].find({}, {"_id": 0}).limit(lim).skip(off))
+        client.close()
+        return jsonify(words)
+    except ValueError as e:
+        client.close()
+        return jsonify({"error": "Wrong input type!"})

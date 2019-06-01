@@ -130,8 +130,8 @@
             </table>
             <hr>
         </div>
-    	<div style="margin-bottom: 50px;">
-            <h3>/db/word?grcWord=<em>synsetId</em></h3>
+        <div style="margin-bottom: 50px;">
+            <h3>/db/inscription/getAll?limit=<em>10</em>&offset=<em>0</em></h3>
             <table border="1" cellpadding="10">
                 <tr>
                     <td><b>method:</b></td>
@@ -139,7 +139,26 @@
                 </tr>
                 <tr>
                     <td><b>description:</b></td>
-                    <td>returns a word from the wordnet collection based on the given synsetId</td>
+                    <td>returns a list of records from the inscriptions collection according to the given limit and offset<br>
+                        (both parameters are optional and have default values 10 and 0 respectively)</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td><em>[ list of inscription objects ]</em></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div style="margin-bottom: 50px;">
+            <h3>/db/word?grcWord=<em>word</em></h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>GET</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>returns the record of a given word in the grc wordnet collection</td>
                 </tr>
                 <tr>
                     <td><b>example response:</b></td>
@@ -170,6 +189,25 @@
                 <tr>
                     <td><b>example response:</b></td>
                     <td><em>ObjectID</em></td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div style="margin-bottom: 50px;">
+            <h3>/db/word/getAll?limit=<em>10</em>&offset=<em>0</em></h3>
+            <table border="1" cellpadding="10">
+                <tr>
+                    <td><b>method:</b></td>
+                    <td>GET</td>
+                </tr>
+                <tr>
+                    <td><b>description:</b></td>
+                    <td>returns a list of records from the wordnet collection according to the given limit and offset<br>
+                        (both parameters are optional and have default values 10 and 0 respectively)</td>
+                </tr>
+                <tr>
+                    <td><b>example response:</b></td>
+                    <td><em>[ list of word objects ]</em></td>
                 </tr>
             </table>
             <hr>
