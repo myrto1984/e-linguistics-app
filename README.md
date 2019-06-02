@@ -11,6 +11,8 @@
   - RUN `pipenv shell` (to activate the virtual environment)
   - RUN `pipenv install` (to install all requirements as mentioned in the PipFile)
   - RUN `pip freeze > requirements.txt` (to create a requirements file that may be needed for deployment)
+  - RUN `chmod u+x install_data.sh` (to make install_data.sh executable)
+  - RUN `./install_data.sh` (to install wordnet data and the needed cltk corpora)
 
 ### run project [in development]
   - RUN `chmod u+x bootstrap.sh` (to make bootstrap.sh executable)
