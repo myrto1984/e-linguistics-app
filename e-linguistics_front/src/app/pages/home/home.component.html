@@ -1,44 +1,49 @@
 <div style="text-align:center">
-  <div class="offset-3 col-6 badge-info" *ngIf="errorMassage">
+  <div class="row col-6 badge-info rounded" *ngIf="errorMassage">
     {{errorMassage}}
   </div>
-  <div *ngIf="myForm">
-    <form class="offset-3 col-6" [formGroup]="myForm">
-      <div class="form-group">
-        <label for="input">Input original text here: </label>
-        <textarea class="form-control" id="input" formControlName="input_text" rows="4"></textarea>
-        <div class="m-1">
-          <button class="btn btn-outline-secondary" type="submit" (click)="sendTextToBack()">Search</button>
+  <div class="row">
+    <div class="offset-1 col-4" *ngIf="myForm">
+      <form [formGroup]="myForm">
+        <div class="form-group">
+          <label for="input">Input original text here: </label>
+          <textarea class="form-control" id="input" formControlName="input_text" rows="4"></textarea>
+          <div class="m-1">
+            <button class="btn btn-outline-secondary" type="submit" (click)="sendTextToBack()">Search</button>
+          </div>
         </div>
+      </form>
+      <div *ngIf="result">
+        <h4>Click on a word to lemmatize</h4>
+        <span class="words" *ngFor="let w of result">
+          <a (click)="lemmatize(w)">{{ w }} </a>
+        </span>
       </div>
-    </form>
-  </div>
-  <div class="" *ngIf="result">
-    <h4>Click on a word to lemmatize</h4>
-    <div>
-      <span class="" *ngFor="let w of result"><a (click)="lemmatize(w)" style="cursor: pointer">{{ w }} </a></span>
     </div>
-  </div>
-  <div class="" *ngIf="lemmas">
-    <form class="offset-3 col-6" [formGroup]="submitLemma">
-      <div class="form-group">
-        <label for="lemma">Input desired lemma here: </label>
-        <textarea class="form-control" id="lemma" formControlName="input_text" rows="3"></textarea>
+
+    <div class="offset-2 col-4" *ngIf="lemmas">
+      <form class="" [formGroup]="submitLemma">
+        <div class="form-group">
+          <label for="lemma">Input desired lemma here: </label>
+          <textarea class="form-control" id="lemma" formControlName="input_text" rows="4"></textarea>
+        </div>
+      </form>
+      <h4>Choose what to do with the lemma: </h4>
+      <span class="p-2">{{lemmas}}</span>
+      <div class="m-1">
+        <button class="btn btn-outline-secondary mx-1" (click)="getLemma(lemmas[0])">Search in grc wordnet</button>
+        <button class="btn btn-outline-secondary mx-1" (click)="searchInPerseus(lemmas[0])">Search in perseus website
+        </button>
       </div>
-    </form>
-    {{lemmas}}
-    <div class="m-1">
-      <button class="btn btn-outline-secondary" (click)="getLemma(lemmas[0])">Search in grc wordnet</button>
-      <button class="btn btn-outline-secondary" (click)="searchInPerseus(lemmas[0])">Search in perseus website</button>
     </div>
   </div>
 </div>
 <div *ngIf="findResults && findResults.length > 0">
   <pre>{{findResults | json}}</pre>
 </div>
-<div *ngIf="noResults">
+<div class="text-center p-2" *ngIf="noResults">
   <span>{{noResults}}</span>
 </div>
-<div class="" *ngIf="perseus_lexicon_HTML" style="height: 55vh">
+<div class="offset-1 col-10 perseus  py-2 mb-5" *ngIf="perseus_lexicon_HTML">
   <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url" style="border: 1px solid black"></iframe>
 </div>

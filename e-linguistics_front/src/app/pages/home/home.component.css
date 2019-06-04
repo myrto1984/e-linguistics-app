@@ -1,0 +1,8 @@
+.words:hover {
+  color: darkred;
+  cursor: pointer;
+}
+
+.perseus {
+  height: 55vh;
+}
