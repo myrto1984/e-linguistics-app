@@ -17,7 +17,7 @@ export class CltkService {
     lemmatizeText(input_text: string): Observable<string[]> {
         const url = this.endpoint + 'lemmatize';
 
-        return this.http.post<string[]>(url, input_text, headerOptions);
+        return this.http.post<string[]>(url, {'input_text': input_text}, headerOptions);
     }
 
 }

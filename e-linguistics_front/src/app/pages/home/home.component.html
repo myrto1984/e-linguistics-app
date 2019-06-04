@@ -14,16 +14,30 @@
     </form>
   </div>
   <div class="" *ngIf="result">
+    <h4>Click on a word to lemmatize</h4>
     <div>
-      <span class="" *ngFor="let w of result"><a (click)="getLemma(w)" style="cursor: pointer">{{ w }} </a></span>
+      <span class="" *ngFor="let w of result"><a (click)="lemmatize(w)" style="cursor: pointer">{{ w }} </a></span>
     </div>
-    <div>
-      <span class="" *ngFor="let l of lemmas"><a (click)="getLemma(l)" style="cursor: pointer">{{ l }} </a></span>
+  </div>
+  <div class="" *ngIf="lemmas">
+    <form class="offset-3 col-6" [formGroup]="submitLemma">
+      <div class="form-group">
+        <label for="lemma">Input desired lemma here: </label>
+        <textarea class="form-control" id="lemma" formControlName="input_text" rows="3"></textarea>
+      </div>
+    </form>
+    {{lemmas}}
+    <div class="m-1">
+      <button class="btn btn-outline-secondary" (click)="getLemma(lemmas[0])">Search in grc wordnet</button>
+      <button class="btn btn-outline-secondary" (click)="searchInPerseus(lemmas[0])">Search in perseus website</button>
     </div>
   </div>
 </div>
 <div *ngIf="findResults && findResults.length > 0">
   <pre>{{findResults | json}}</pre>
+</div>
+<div *ngIf="noResults">
+  <span>{{noResults}}</span>
 </div>
 <div class="" *ngIf="perseus_lexicon_HTML" style="height: 55vh">
   <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url" style="border: 1px solid black"></iframe>

@@ -12,9 +12,11 @@ import {zip} from "rxjs";
 export class HomeComponent implements OnInit {
   errorMassage: string;
   myForm: FormGroup;
+  submitLemma: FormGroup;
   result: string[];
   lemmas: string[];
   findResults: findResults[];
+  noResults: string;
   perseus_lexicon_HTML: any;
 
   constructor(private nltkService: NltkService,
@@ -33,15 +35,12 @@ export class HomeComponent implements OnInit {
   sendTextToBack() {
     this.errorMassage = '';
     if (this.myForm.valid) {
-      zip(
-          this.nltkService.tokenizeText(this.myForm.value),
-          this.cltkService.lemmatizeText(this.myForm.value)
-      ).subscribe(
-          res => {
-            this.result = res[0];
-            this.lemmas = res[1];
-          },
-          er => console.log(er)
+
+      this.nltkService.tokenizeText(this.myForm.value).subscribe(
+        res => {
+          this.result = res;
+        },
+        er => console.log(er)
       );
     }
     // if (this.myForm.valid) {
@@ -59,19 +58,36 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  getLemma(word: string) {
-    this.nltkService.find(word).subscribe(
-        res => this.findResults = res,
-        er => console.log(er),
-        () => {
-          if (this.findResults.length === 0) {
-            this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
-          }
-          else {
-            this.perseus_lexicon_HTML = '';
-          }
-        }
+  lemmatize(lemma: string) {
+    // this should probably go somewhere else
+    this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
+    this.lemmas = [];
+    this.perseus_lexicon_HTML = '';
+    this.cltkService.lemmatizeText(lemma).subscribe(
+      res => {
+        this.lemmas = res;
+      },
+      er => console.log(er)
     );
+  }
 
+  getLemma(word: string) {
+    this.perseus_lexicon_HTML = '';
+    this.nltkService.find(word).subscribe(
+      res => this.findResults = res,
+      er => console.log(er),
+      () => {
+        if (this.findResults.length === 0) {
+          this.noResults = 'There was no match for this lemma.'
+        }
+        else {
+          this.noResults = '';
+        }
+      }
+    );
+  }
+
+  searchInPerseus(word: string) {
+    this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
   }
 }
