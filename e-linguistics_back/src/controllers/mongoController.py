@@ -48,17 +48,14 @@ def getAllInscriptions():
     db = client[db_name]
     lim = 10
     off = 0
-    try:
-        if request.args.get('limit', ''):
-            lim = int(request.args.get('limit'))
-        if request.args.get('offset', ''):
-            off = int(request.args.get('offset'))
-        inscrs = list(db[inscr_col].find({}, {"_id": 0}).limit(lim).skip(off))
-        client.close()
-        return jsonify(inscrs)
-    except ValueError:
-        client.close()
-        return jsonify({"error": "Wrong input type!"})
+
+    if request.args.get('limit', ''):
+        lim = int(request.args.get('limit'))
+    if request.args.get('offset', ''):
+        off = int(request.args.get('offset'))
+    inscrs = list(db[inscr_col].find({}, {"_id": 0}).limit(lim).skip(off))
+    client.close()
+    return jsonify(inscrs)
 
 
 @app.route(endpoint + 'word', methods=['POST', 'GET'])
@@ -95,14 +92,10 @@ def getAllWords():
     db = client[db_name]
     lim = 10
     off = 0
-    try:
-        if request.args.get('limit', ''):
-            lim = int(request.args.get('limit'))
-        if request.args.get('offset', ''):
-            off = int(request.args.get('offset'))
-        words = list(db[words_col].find({}, {"_id": 0}).limit(lim).skip(off))
-        client.close()
-        return jsonify(words)
-    except ValueError as e:
-        client.close()
-        return jsonify({"error": "Wrong input type!"})
+    if request.args.get('limit', ''):
+        lim = int(request.args.get('limit'))
+    if request.args.get('offset', ''):
+        off = int(request.args.get('offset'))
+    words = list(db[words_col].find({}, {"_id": 0}).limit(lim).skip(off))
+    client.close()
+    return jsonify(words)
