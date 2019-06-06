@@ -10,11 +10,12 @@
   - (RUN `pipenv --three` to initialize a Python3 virtual environment - if it has not been created already - to use specific version eg `pipenv --python /usr/bin/python3`)
   - RUN `pipenv shell` (to activate the virtual environment)
   - RUN `pipenv install` (to install all requirements as mentioned in the PipFile)
-  - RUN `pip freeze > requirements.txt` (to create a requirements file that may be needed for deployment)
+  [- RUN `pip freeze > requirements.txt` (to create a requirements file - optional)]
   - RUN `chmod u+x install_data.sh` (to make install_data.sh executable)
   - RUN `./install_data.sh` (to install wordnet data and the needed cltk corpora)
 
 ### run project [in development]
+  - RUN `pipenv shell` (to enter the virtual environment)
   - RUN `chmod u+x bootstrap.sh` (to make bootstrap.sh executable)
   - RUN `./bootstrap.sh` (to run the project - default endpoint: 0.0.0.0:5000)
 
