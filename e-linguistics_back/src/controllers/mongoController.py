@@ -1,6 +1,5 @@
 import pymongo
 from flask import request, jsonify
-from http import HTTPStatus
 from src import app
 
 
@@ -73,13 +72,15 @@ def word():
     elif request.method == 'POST':
         # example body: {"grc_word" : "word", "eng_wn_synsets": [{"synsetId" : "...", "synset" : "..."}] }
         if request.get_json():
+            result = {}
             new_word = request.get_json()
-            result = db[words_col].update({"grc_word": new_word['grc_word']}, new_word, True)
-            if not result['updatedExisting']:
-                wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
-                for w in list(new_word['eng_wn_synsets']):
+            wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
+            for w in list(new_word['eng_wn_synsets']):
+                oldw = db[words_col].find_one({"grc_word": new_word['grc_word'], "eng_wn_synsets": {"synsetId": w['synsetId'], "synset": w['synset']}})
+                if oldw is None:
                     wn.write(w['synsetId'] + '\tgrc:lemma\t' + new_word['grc_word'] + '\n')
-                wn.close()
+                    result = db[words_col].update_one({"grc_word": new_word['grc_word']}, {"$addToSet": {"eng_wn_synsets": w}}, True)
+            wn.close()
             client.close()
             return jsonify(str(result))
     client.close()
