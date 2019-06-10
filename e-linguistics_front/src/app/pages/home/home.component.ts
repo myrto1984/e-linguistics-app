@@ -2,7 +2,6 @@ import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {findResults, NltkService} from "../../services/nltk.service";
 import {CltkService} from "../../services/cltk.service";
-import {zip} from "rxjs";
 
 @Component({
   selector: 'app-home',
@@ -44,24 +43,16 @@ export class HomeComponent implements OnInit {
         er => console.log(er)
       );
     }
-    // if (this.myForm.valid) {
-    //   this.nltkService.tokenizeText(this.myForm.value).subscribe(
-    //     res => this.result = res,
-    //     er => console.log(er)
-    //   );
-    //   this.cltkService.lemmatizeText(this.myForm.value).subscribe(
-    //       res => this.lemmas = res,
-    //       er => console.log(er)
-    //   )
-    // }
     else {
-      this.errorMassage = 'Please put an inscription in text area';
+      this.errorMassage = 'Please put an inscription in text area.';
     }
   }
 
   lemmatize(lemma: string) {
     // this should probably go somewhere else
     this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
+    this.noResults = '';
+    this.perseus_lexicon_HTML = '';
     this.lemmas = [];
     this.perseus_lexicon_HTML = '';
     this.cltkService.lemmatizeText(lemma).subscribe(
@@ -72,9 +63,9 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  getLemma(word: string) {
+  getLemma(word: string, language:string) {
     this.perseus_lexicon_HTML = '';
-    this.nltkService.find(word).subscribe(
+    this.nltkService.find(word, language).subscribe(
       res => this.findResults = res,
       er => console.log(er),
       () => {
@@ -89,6 +80,16 @@ export class HomeComponent implements OnInit {
   }
 
   searchInPerseus(word: string) {
-    this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
+      this.noResults = '';
+      this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
+  }
+
+
+  handleCheckBoxes(event, num: number) {
+    if(event.target.checked) {
+      console.log('just checked row ' + num);
+    } else {
+      console.log('just unchecked row ' + num);
+    }
   }
 }

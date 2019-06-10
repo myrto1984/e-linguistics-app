@@ -26,8 +26,8 @@ export class NltkService {
         return this.http.post<string[]>(url, input_text, headerOptions);
     }
 
-    find(word: string): Observable<findResults[]> {
-        const url= this.endpoint + 'find/grc/synsets';
+    find(word: string, language: string): Observable<findResults[]> {
+        const url= this.endpoint + `find/${language}/synsets`;
 
         return this.http.post<findResults[]>(url, {'search_word': word}, headerOptions);
     }
