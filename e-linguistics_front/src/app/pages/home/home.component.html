@@ -21,7 +21,11 @@
       </div>
     </div>
 
-    <div class="offset-2 col-4" *ngIf="lemmas">
+    <div class="col-2 mt-5">
+      <button class="btn btn-outline-success" [ngClass]="{'disabled': disableSave}">Save inscription</button>
+    </div>
+
+    <div class="col-4" *ngIf="lemmas">
       <form class="" [formGroup]="submitLemma">
         <div class="form-group">
           <label for="lemma">Input desired lemma here: </label>
@@ -30,10 +34,10 @@
       </form>
       <h4>Choose what to do with the lemma: </h4>
       <span class="p-2">{{lemmas}}</span>
-      <div class="m-1">
-        <button class="btn btn-outline-secondary mx-1" (click)="getLemma(lemmas[0], 'grc')">Search in grc wordnet</button>
-        <button class="btn btn-outline-secondary mx-1" (click)="searchInPerseus(lemmas[0])">Search in perseus website
-        </button>
+      <div class="m-1 ">
+        <button class="btn btn-outline-secondary mx-1" (click)="getLemma(submitLemma.get('input_text').value, 'grc')">Search grc wordnet</button>
+        <button class="btn btn-outline-secondary mx-1" (click)="searchInPerseus(submitLemma.get('input_text').value)">Search perseus</button>
+        <button class="btn btn-outline-secondary mx-1" [ngClass]="{'disabled': disableAddWord}" (click)="addWord()">Add word</button>
       </div>
     </div>
   </div>
@@ -61,7 +65,9 @@
   <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url" style="border: 1px solid black"></iframe>
 </div>
 <div class="offset-4 col-4 mb-xl-5 text-center" *ngIf="perseus_lexicon_HTML">
-  <label for="enLemma">Input english lemma here: </label>
-  <textarea class="form-control" id="enLemma" rows="4"></textarea>
-  <button class="btn btn-outline-secondary m-1" (click)="getLemma(lemmas[0], 'eng')">Search in eng wordnet</button>
+  <form [formGroup]="englishLemma">
+    <label for="enLemma">Input english lemma here: </label>
+    <textarea class="form-control" id="enLemma" rows="4" formControlName="input_text"></textarea>
+    <button class="btn btn-outline-secondary m-1" (click)="getLemma(englishLemma.get('input_text').value, 'eng')">Search in eng wordnet</button>
+  </form>
 </div>

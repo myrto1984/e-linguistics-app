@@ -1,7 +1,8 @@
 import {Component, OnInit} from "@angular/core";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {findResults, NltkService} from "../../services/nltk.service";
+import {NltkService} from "../../services/nltk.service";
 import {CltkService} from "../../services/cltk.service";
+import {findResults, word} from "../../domain/collections-models";
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,15 @@ import {CltkService} from "../../services/cltk.service";
 export class HomeComponent implements OnInit {
   errorMassage: string;
   myForm: FormGroup;
+  englishLemma: FormGroup;
   submitLemma: FormGroup;
   result: string[];
   lemmas: string[];
   findResults: findResults[];
+  words: word[] = [];
+  word: word;
+  disableAddWord = true;
+  disableSave = true;
   noResults: string;
   perseus_lexicon_HTML: any;
 
@@ -26,10 +32,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initWord();
   }
 
   initForm() {
     this.myForm = this.fb.group({input_text: ['', Validators.required]});
+    this.englishLemma = this.fb.group({input_text: ['', Validators.required]});
   }
 
   sendTextToBack() {
@@ -42,8 +50,7 @@ export class HomeComponent implements OnInit {
         },
         er => console.log(er)
       );
-    }
-    else {
+    } else {
       this.errorMassage = 'Please put an inscription in text area.';
     }
   }
@@ -54,16 +61,16 @@ export class HomeComponent implements OnInit {
     this.noResults = '';
     this.perseus_lexicon_HTML = '';
     this.lemmas = [];
-    this.perseus_lexicon_HTML = '';
     this.cltkService.lemmatizeText(lemma).subscribe(
       res => {
         this.lemmas = res;
+        this.submitLemma.get('input_text').setValue(this.lemmas[0]);
       },
       er => console.log(er)
     );
   }
 
-  getLemma(word: string, language:string) {
+  getLemma(word: string, language: string) {
     this.perseus_lexicon_HTML = '';
     this.nltkService.find(word, language).subscribe(
       res => this.findResults = res,
@@ -71,8 +78,7 @@ export class HomeComponent implements OnInit {
       () => {
         if (this.findResults.length === 0) {
           this.noResults = 'There was no match for this lemma.'
-        }
-        else {
+        } else {
           this.noResults = '';
         }
       }
@@ -80,16 +86,54 @@ export class HomeComponent implements OnInit {
   }
 
   searchInPerseus(word: string) {
-      this.noResults = '';
-      this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
+    this.noResults = '';
+    this.findResults = [];
+    this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
   }
-
 
   handleCheckBoxes(event, num: number) {
-    if(event.target.checked) {
-      console.log('just checked row ' + num);
+    if (event.target.checked) {
+      this.word.synsets.push(this.findResults[num].wn_synset);
     } else {
-      console.log('just unchecked row ' + num);
+      for (let i = this.word.synsets.length; i >= 0; i--) {
+        if (this.word.synsets[i] === this.findResults[num].wn_synset) {
+          // console.log('i will try to delete ' + this.findResults[num].wn_synset + ' at ' + i);
+          this.word.synsets.splice(i, 1);
+        }
+      }
     }
+    this.disableAddWord = this.word.synsets.length <= 0;
   }
+
+  initWord() {
+    this.word = new word();
+    this.word.synsets = [];
+  }
+
+  addWord() {
+    if (this.submitLemma.valid) {
+      let exists = false;
+      this.word.word = this.submitLemma.get('input_text').value;
+      for (let i = 0; i < this.words.length; i++) {
+        if (this.words[i].word === this.word.word) {
+          exists = true;
+          if (this.words[i].synsets !== this.word.synsets) {
+            console.log('synsets dont match');
+          }
+          console.log('found ya');
+        }
+      }
+      if (!exists) {
+        console.log('push');
+        let temp: word;
+        temp = this.word;
+        this.words.push(temp);
+        this.word = new word();
+      }
+    }
+    console.log(this.words);
+    this.initWord();
+    this.findResults = [];
+  }
+
 }
