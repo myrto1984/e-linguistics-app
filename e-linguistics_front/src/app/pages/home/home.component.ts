@@ -172,20 +172,29 @@ export class HomeComponent implements OnInit {
   }
 
   save() {
-    for (let i = 0; i < this.words.length; i++) {
-      this.wordsAsArray.push(this.createWordsField());
-      for (let j = 0; j < this.words[i].synsets.length; j++) {
-        this.getSynsetsAsArray(i).push(this.fb.control(''));
+    if (this.inscriptionForm.valid && !this.disableSave) {
+      for (let i = 0; i < this.words.length; i++) {
+        this.wordsAsArray.push(this.createWordsField());
+        for (let j = 0; j < this.words[i].synsets.length; j++) {
+          this.getSynsetsAsArray(i).push(this.fb.control(''));
+        }
+      }
+      this.inscriptionForm.get('words').patchValue(this.words);
+      this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
+
+      this.dbService.postInscription(this.inscriptionForm.value).subscribe(
+        res => console.log(res)
+      );
+
+      this.inscriptionForm = this.fb.group(this.formPrepare);
+      this.disableSave = true;
+    } else {
+      if (!this.inscriptionForm.valid) {
+        this.errorMassage = 'Please put an inscription in text area.';
+      } else {
+        this.errorMassage = 'Add at least one word for the inscription';
       }
     }
-    this.inscriptionForm.get('words').patchValue(this.words);
-    this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
-
-    this.dbService.postInscription(this.inscriptionForm.value).subscribe(
-      res => console.log(res)
-    );
-
-    this.inscriptionForm.reset();
   }
 
 }
