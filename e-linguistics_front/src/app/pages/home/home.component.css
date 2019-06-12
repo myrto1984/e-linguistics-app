@@ -6,3 +6,7 @@
 .perseus {
   height: 55vh;
 }
+
+.strikethrough {
+  text-decoration: line-through;
+}

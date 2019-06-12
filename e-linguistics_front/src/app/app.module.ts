@@ -10,6 +10,7 @@ import {HomeComponent} from "./pages/home/home.component";
 import {HeaderComponent} from "./pages/persistent/header.component";
 import {FooterComponent} from "./pages/persistent/footer.component";
 import {CltkService} from "./services/cltk.service";
+import {DbInscriptionService} from "./services/db-inscription.service";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {CltkService} from "./services/cltk.service";
   ],
   providers: [
     NltkService,
-    CltkService
+    CltkService,
+    DbInscriptionService
   ],
   bootstrap: [
     AppComponent

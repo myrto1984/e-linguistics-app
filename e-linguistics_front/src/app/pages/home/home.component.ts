@@ -1,8 +1,9 @@
 import {Component, OnInit} from "@angular/core";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NltkService} from "../../services/nltk.service";
 import {CltkService} from "../../services/cltk.service";
-import {findResults, word} from "../../domain/collections-models";
+import {FindResults, Word} from "../../domain/collections-models";
+import {DbInscriptionService} from "../../services/db-inscription.service";
 
 @Component({
   selector: 'app-home',
@@ -15,20 +16,43 @@ export class HomeComponent implements OnInit {
   myForm: FormGroup;
   englishLemma: FormGroup;
   submitLemma: FormGroup;
+  inscriptionForm: FormGroup;
   result: string[];
   lemmas: string[];
-  findResults: findResults[];
-  words: word[] = [];
-  word: word;
+  findResults: FindResults[];
+  noResults: string;
+  words: Word[] = [];
+  word: Word;
   disableAddWord = true;
   disableSave = true;
-  noResults: string;
+  strikeThrough: boolean[] = [];
+  wordIndex: number;
+  loading = false;
   perseus_lexicon_HTML: any;
+
+  formPrepare = {
+    inscription_text: ['', Validators.required],
+    phID: 'PH190736',
+    dateFrom: '-340',
+    dateTo: '340',
+    id_in_publication: '',
+    general_type: 'votive',
+    provenance: '',
+    bibliography: '',
+    words: this.fb.array([])
+  };
+
+  createWordsField(): FormGroup {
+    return this.fb.group({
+      word: '',
+      synsets: this.fb.array([])
+    });
+  }
 
   constructor(private nltkService: NltkService,
               private cltkService: CltkService,
-              private fb: FormBuilder) {
-  }
+              private dbService: DbInscriptionService,
+              private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -38,12 +62,14 @@ export class HomeComponent implements OnInit {
   initForm() {
     this.myForm = this.fb.group({input_text: ['', Validators.required]});
     this.englishLemma = this.fb.group({input_text: ['', Validators.required]});
+    this.inscriptionForm = this.fb.group(this.formPrepare);
   }
 
   sendTextToBack() {
     this.errorMassage = '';
+    this.strikeThrough = [];
+    this.myForm.get('input_text').setValue(this.myForm.get('input_text').value.replace(/\s+/g, " "));
     if (this.myForm.valid) {
-
       this.nltkService.tokenizeText(this.myForm.value).subscribe(
         res => {
           this.result = res;
@@ -56,15 +82,17 @@ export class HomeComponent implements OnInit {
   }
 
   lemmatize(lemma: string) {
-    // this should probably go somewhere else
     this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
     this.noResults = '';
     this.perseus_lexicon_HTML = '';
     this.lemmas = [];
+    this.loading = true;
     this.cltkService.lemmatizeText(lemma).subscribe(
       res => {
         this.lemmas = res;
+        this.loading = false;
         this.submitLemma.get('input_text').setValue(this.lemmas[0]);
+        this.wordIndex = this.result.findIndex(word => word === lemma);
       },
       er => console.log(er)
     );
@@ -72,6 +100,7 @@ export class HomeComponent implements OnInit {
 
   getLemma(word: string, language: string) {
     this.perseus_lexicon_HTML = '';
+    this.disableAddWord = true;
     this.nltkService.find(word, language).subscribe(
       res => this.findResults = res,
       er => console.log(er),
@@ -81,6 +110,7 @@ export class HomeComponent implements OnInit {
         } else {
           this.noResults = '';
         }
+
       }
     );
   }
@@ -88,6 +118,8 @@ export class HomeComponent implements OnInit {
   searchInPerseus(word: string) {
     this.noResults = '';
     this.findResults = [];
+    this.disableAddWord = true;
+    this.englishLemma.reset();
     this.perseus_lexicon_HTML = `http://www.perseus.tufts.edu/hopper/morph?l=${word}&la=gr`;
   }
 
@@ -106,7 +138,7 @@ export class HomeComponent implements OnInit {
   }
 
   initWord() {
-    this.word = new word();
+    this.word = new Word();
     this.word.synsets = [];
   }
 
@@ -117,23 +149,43 @@ export class HomeComponent implements OnInit {
       for (let i = 0; i < this.words.length; i++) {
         if (this.words[i].word === this.word.word) {
           exists = true;
-          if (this.words[i].synsets !== this.word.synsets) {
-            console.log('synsets dont match');
-          }
-          console.log('found ya');
+          this.words[i].synsets = this.word.synsets;
         }
       }
       if (!exists) {
-        console.log('push');
-        let temp: word;
-        temp = this.word;
-        this.words.push(temp);
-        this.word = new word();
+        this.words.push(this.word);
       }
     }
-    console.log(this.words);
     this.initWord();
+    this.strikeThrough[this.wordIndex] = true;
+    this.disableAddWord = true;
     this.findResults = [];
+    this.disableSave = false;
+  }
+
+  get wordsAsArray() {
+    return this.inscriptionForm.get('words') as FormArray;
+  }
+
+  getSynsetsAsArray(index: number) {
+    return this.wordsAsArray.controls[index].get('synsets') as FormArray;
+  }
+
+  save() {
+    for (let i = 0; i < this.words.length; i++) {
+      this.wordsAsArray.push(this.createWordsField());
+      for (let j = 0; j < this.words[i].synsets.length; j++) {
+        this.getSynsetsAsArray(i).push(this.fb.control(''));
+      }
+    }
+    this.inscriptionForm.get('words').patchValue(this.words);
+    this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
+
+    this.dbService.postInscription(this.inscriptionForm.value).subscribe(
+      res => console.log(res)
+    );
+
+    this.inscriptionForm.reset();
   }
 
 }

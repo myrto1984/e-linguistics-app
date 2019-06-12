@@ -1,16 +1,22 @@
-export class findResults {
+export class FindResults {
   definition: string;
   synset_offset: string;
   wn_synset: string;
 }
 
-export class grc_wordnet {
-  grc_word: string;
-  eng_wn_synsets: string[];
-  inscrs: string[];
-}
-
-export class word {
+export class Word {
   word: string;
   synsets: string[];
+}
+
+export class Inscription {
+  inscription_text: string;
+  phID: string;
+  dateFrom: number;
+  dateTo: number;
+  id_in_publication: string;
+  general_type: string;
+  provenance: string;
+  bibliography: string;
+  words: Word[];
 }
