@@ -27,5 +27,6 @@ def grc_to_mongo():
     #             db[words_col].update_one({"grc_word": new_word[2]}, {"$push": {"eng_wn_synsets": {"$each": [synset_entry] } } }, True)
     # grc_wn.close()
     # client.close()
+    # return jsonify("The grc_wordnet collection was created successfully!")
 
     return jsonify("The original grc was already parsed")

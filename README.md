@@ -4,6 +4,7 @@
 ### requirements:
   - Python 3.6 (with pip3 installed)
   - [Pipenv virtual environment tool](https://pipenv.readthedocs.io/en/latest/)
+  - [MongoDB](https://www.mongodb.com/) (make sure a db is created for the project with the same name as the one given in the config file)
 
 ### project installation:
   - cd to the `e-linguistics_back` folder
