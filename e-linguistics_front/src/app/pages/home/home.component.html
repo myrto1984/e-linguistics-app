@@ -1,6 +1,6 @@
 <div style="text-align:center">
-  <div class="row col-6 badge-info rounded" *ngIf="errorMassage">
-    {{errorMassage}}
+  <div class="row offset-5 col-2 badge-info rounded " *ngIf="errorMassage">
+    <div>{{errorMassage}}</div>
   </div>
   <div class="row">
     <div class="offset-1 col-4" *ngIf="myForm">
@@ -15,35 +15,72 @@
       </form>
       <div *ngIf="result">
         <h4>Click on a word to lemmatize</h4>
-        <span class="words" *ngFor="let w of result">
-          <a (click)="lemmatize(w)">{{ w }} </a>
+        <span class="words" [ngClass]="{'strikethrough': strikeThrough[i]}" *ngFor="let w of result; let i = index">
+          <a class="" (click)="lemmatize(w)">{{ w }} </a>
         </span>
       </div>
     </div>
 
-    <div class="offset-2 col-4" *ngIf="lemmas">
-      <form class="" [formGroup]="submitLemma">
-        <div class="form-group">
-          <label for="lemma">Input desired lemma here: </label>
-          <textarea class="form-control" id="lemma" formControlName="input_text" rows="4"></textarea>
+    <div class="col-2 mt-5">
+      <button class="btn btn-outline-success" [ngClass]="{'disabled': disableSave}" (click)="save()">Save inscription</button>
+    </div>
+
+    <div class="col-4" *ngIf="lemmas">
+      <div *ngIf="loading" class="spinner-border m-5 text-secondary" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <div *ngIf="!loading">
+        <form class="" [formGroup]="submitLemma">
+          <div class="form-group">
+            <label for="lemma">Input desired lemma here: </label>
+            <textarea class="form-control" id="lemma" formControlName="input_text" rows="4"></textarea>
+          </div>
+        </form>
+        <h4>Choose what to do with the lemma: </h4>
+        <span class="p-2">{{submitLemma.get('input_text').value}}</span>
+        <div class="m-1 ">
+          <button class="btn btn-outline-secondary mx-1" (click)="getLemma(submitLemma.get('input_text').value, 'grc')">
+            Search grc wordnet
+          </button>
+          <button class="btn btn-outline-secondary mx-1" (click)="searchInPerseus(submitLemma.get('input_text').value)">
+            Search perseus
+          </button>
+          <button class="btn btn-outline-secondary mx-1" [ngClass]="{'disabled': disableAddWord}" (click)="addWord()">
+            Add word
+          </button>
         </div>
-      </form>
-      <h4>Choose what to do with the lemma: </h4>
-      <span class="p-2">{{lemmas}}</span>
-      <div class="m-1">
-        <button class="btn btn-outline-secondary mx-1" (click)="getLemma(lemmas[0])">Search in grc wordnet</button>
-        <button class="btn btn-outline-secondary mx-1" (click)="searchInPerseus(lemmas[0])">Search in perseus website
-        </button>
       </div>
     </div>
   </div>
 </div>
-<div *ngIf="findResults && findResults.length > 0">
-  <pre>{{findResults | json}}</pre>
+<div class="offset-2 col-8 py-4" *ngIf="findResults && findResults.length > 0">
+<!--  <pre>{{findResults | json}}</pre>-->
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Definition</th>
+<!--      <th>#</th>-->
+    </tr>
+    <tr *ngFor="let res of findResults; let i  = index">
+      <td><input type="checkbox" id="{{i}}" value="{{i}}" (change)="handleCheckBoxes($event, i)"></td>
+      <td>{{res.definition}}</td>
+    </tr>
+    </thead>
+  </table>
 </div>
 <div class="text-center p-2" *ngIf="noResults">
   <span>{{noResults}}</span>
 </div>
-<div class="offset-1 col-10 perseus  py-2 mb-5" *ngIf="perseus_lexicon_HTML">
+<div class="offset-1 col-10 perseus  py-4" *ngIf="perseus_lexicon_HTML">
   <iframe class="h-100 col-12" [src]="perseus_lexicon_HTML | sanitize_url" style="border: 1px solid black"></iframe>
 </div>
+<div class="offset-4 col-4 mb-xl-5 text-center" *ngIf="perseus_lexicon_HTML">
+  <form [formGroup]="englishLemma">
+    <label for="enLemma">Input english lemma here: </label>
+    <textarea class="form-control" id="enLemma" rows="4" formControlName="input_text"></textarea>
+    <button class="btn btn-outline-secondary m-1" (click)="getLemma(englishLemma.get('input_text').value, 'eng')">Search in eng wordnet</button>
+  </form>
+</div>
+
+<!--<pre>{{inscriptionForm.value | json}}</pre>-->
