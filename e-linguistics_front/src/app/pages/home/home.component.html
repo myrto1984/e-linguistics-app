@@ -2,11 +2,61 @@
   <div class="row offset-5 col-2 badge-info rounded " *ngIf="errorMassage">
     <div>{{errorMassage}}</div>
   </div>
-  <div class="row">
-    <div class="offset-1 col-4" *ngIf="myForm">
+  <div class="row mt-3">
+
+    <div class="col-1">
+      <button class="btn btn-outline-info" type="button" (click)="collapse()">
+        {{show ? 'hide ' : 'show '}}form <i class="fa fa-angle-{{show ? 'up' : 'down'}}"></i>
+      </button>
+    </div>
+
+    <div class="col-10 collapse" [ngClass]="{'show': show}" id="collapseExample" *ngIf="myForm">
+      <form [formGroup]="inscriptionForm">
+
+        <div class="form-group row">
+          <label for="phID" class="col-sm-2 col-form-label-sml">Packard Humanities Institute ID:</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="phID" formControlName="phID" placeholder="Packard Humanities Institute ID">
+          </div>
+          <label for="id_in_publication" class="col-sm-2 col-form-label-sml">Αριθμός καταλόγου:</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="id_in_publication" formControlName="id_in_publication" placeholder="Αριθμός καταλόγου">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="provenance" class="col-sm-2 col-form-label-sml">Τόπος εύρεσής: </label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="provenance" formControlName="provenance" placeholder="Τόπος εύρεσής">
+          </div>
+          <label for="bibliography" class="col-sm-2 col-form-label-sml">Σχετική βιβλιογρία: </label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control form-control-sm" id="bibliography" formControlName="bibliography" placeholder="Σχετική βιβλιογρία">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="general_type" class="col-sm-2 col-form-label-sml">Γενικό τύπος : </label>
+          <div class="col-sm-3">
+            <input type="text" class="form-control form-control-sm" id="general_type" formControlName="general_type" placeholder="Γενικό τύπος">
+          </div>
+          <label for="dateFrom" class="col-sm-2 col-form-label-sml text-right">Εύρος χρονολόγισης, από: </label>
+          <div class="col-sm-2">
+            <input type="text" class="form-control form-control-sm" id="dateFrom" formControlName="dateFrom" placeholder="Από">
+          </div>
+          <label for="dateTo" class="col-sm-1 col-form-label-sml text-right">Έως: </label>
+          <div class="col-sm-2">
+            <input type="text" class="form-control form-control-sm" id="dateTo" formControlName="dateTo" placeholder="Έως">
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="col-4" [ngClass]="{'offset-1' : show}" *ngIf="myForm">
       <form [formGroup]="myForm">
         <div class="form-group">
-          <label for="input">Input original text here: </label>
+          <label for="input">Input inscription text here: </label>
           <textarea class="form-control" id="input" formControlName="input_text" rows="4"></textarea>
           <div class="m-1">
             <button class="btn btn-outline-secondary" type="submit" (click)="sendTextToBack()">Search</button>
@@ -21,7 +71,7 @@
       </div>
     </div>
 
-    <div class="col-2 mt-5">
+    <div class="col-2 pt-5">
       <button class="btn btn-outline-success" [ngClass]="{'disabled': disableSave}" (click)="save()">Save inscription</button>
     </div>
 

@@ -29,6 +29,7 @@ export class HomeComponent implements OnInit {
   wordIndex: number;
   loading = false;
   perseus_lexicon_HTML: any;
+  show = true;
 
   formPrepare = {
     inscription_text: ['', Validators.required],
@@ -60,9 +61,9 @@ export class HomeComponent implements OnInit {
   }
 
   initForm() {
+    this.inscriptionForm = this.fb.group(this.formPrepare);
     this.myForm = this.fb.group({input_text: ['', Validators.required]});
     this.englishLemma = this.fb.group({input_text: ['', Validators.required]});
-    this.inscriptionForm = this.fb.group(this.formPrepare);
   }
 
   sendTextToBack() {
@@ -183,11 +184,13 @@ export class HomeComponent implements OnInit {
       this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
 
       this.dbService.postInscription(this.inscriptionForm.value).subscribe(
-        res => console.log(res)
+        res => console.log(res),
+        er => console.log(er),
+        () => {
+          this.inscriptionForm = this.fb.group(this.formPrepare);
+          this.disableSave = true;
+        }
       );
-
-      this.inscriptionForm = this.fb.group(this.formPrepare);
-      this.disableSave = true;
     } else {
       if (!this.inscriptionForm.valid) {
         this.errorMassage = 'Please put an inscription in text area.';
@@ -195,6 +198,11 @@ export class HomeComponent implements OnInit {
         this.errorMassage = 'Add at least one word for the inscription';
       }
     }
+  }
+
+  collapse() {
+    this.show  = !this.show;
+    console.log(this.show);
   }
 
 }
