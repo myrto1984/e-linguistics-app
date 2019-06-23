@@ -1,5 +1,5 @@
 import pymongo
-from flask import request, jsonify
+from flask import jsonify
 from src import app
 from nltk.corpus import wordnet as wn
 

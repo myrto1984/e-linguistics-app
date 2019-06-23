@@ -1,6 +1,7 @@
 import pymongo
 from flask import request, jsonify
 from src import app
+from nltk.corpus import wordnet as wn
 
 
 endpoint = '/db/'
@@ -26,7 +27,7 @@ def inscription():
     elif request.method == 'POST':
         # example body:
         # {"inscription_text" : "...", "phID" : "PH190736", "dateFrom" : -340, "dateTo" : -340,
-        #  "id_in_publication" : "...", "general_type" : "αναθηματική", "provenance" : "...",
+        #  "id_in_publication" : "...", "general_type" : "votive", "provenance" : "...",
         #  "bibliography" : "....", "words" : [ {"word":"w1", "synsets": ["synset1", "synset2"]} ] }
         if request.get_json():
             new_inscr = request.get_json()
@@ -34,7 +35,11 @@ def inscription():
             if new_id:
                 words = new_inscr['words']
                 for w in list(words):
-                    db[words_col].update_one({"grc_word": w["word"]}, {"$push": {"inscrs": {"$each": [new_id]}}})
+                    synsList = []
+                    for s in list(w['synsets']):
+                        synset = wn.synset(s)
+                        synsList.append({"synsetId": "{:08d}".format(synset.offset()) + '-' + str(synset.pos()), "synset": s})
+                    db[words_col].update({"grc_word": w["word"]}, {"$set": {"eng_wn_synsets": synsList}, "$push": {"inscrs": {"$each": [new_inscr['phID']]}}}, True)
             client.close()
             return jsonify(str(new_id))
     client.close()
@@ -63,9 +68,10 @@ def word():
     db = client[db_name]
     if request.method == 'GET':
         input_word = request.args.get('grcWord', '')
-        grc_word = db[words_col].find_one({"grc_word": input_word})
+        # grc_word = db[words_col].find_one({"grc_word": input_word})
+        grc_word = list(db[words_col].aggregate([{"$match": {"grc_word": input_word}}, {"$project": {"grc_word": "$grc_word", "eng_wn_synsets": "$eng_wn_synsets", "inscrs": {"$ifNull": ["$inscrs", None]}}}]))
         if grc_word:
-            grc_word['_id'] = str(grc_word['_id'])
+            grc_word[0]["_id"] = str(grc_word[0]["_id"])
             return jsonify(grc_word)
         else:
             return jsonify({})
@@ -93,10 +99,18 @@ def getAllWords():
     db = client[db_name]
     lim = 10
     off = 0
+    with_inscrs = False
     if request.args.get('limit', ''):
         lim = int(request.args.get('limit'))
     if request.args.get('offset', ''):
         off = int(request.args.get('offset'))
-    words = list(db[words_col].find({}, {"_id": 0}).limit(lim).skip(off))
+    if request.args.get('includingIncrs', ''):
+        with_inscrs = (request.args.get('includingIncrs') == 'true')
+
+    if with_inscrs:
+        words = list(db[words_col].find({"inscrs": {"$exists": True}}, {"_id": 0, "grc_word": 1, "eng_wn_synsets": 1, "inscrs": 1}).limit(lim).skip(off))
+    else:
+        words = list(db[words_col].find({}, {"_id": 0, "grc_word": 1, "eng_wn_synsets": 1}).limit(lim).skip(off))
+
     client.close()
     return jsonify(words)
