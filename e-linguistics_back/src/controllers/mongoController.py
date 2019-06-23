@@ -39,7 +39,17 @@ def inscription():
                     for s in list(w['synsets']):
                         synset = wn.synset(s)
                         synsList.append({"synsetId": "{:08d}".format(synset.offset()) + '-' + str(synset.pos()), "synset": s})
-                    db[words_col].update({"grc_word": w["word"]}, {"$set": {"eng_wn_synsets": synsList}, "$push": {"inscrs": {"$each": [new_inscr['phID']]}}}, True)
+
+                    grc_wn = open(app.root_path + '/static/e-linguistics_data/corpora/omw/grc/wn-data-grc.tab', 'a')
+                    for syn in synsList:
+                        oldw = db[words_col].find_one({"grc_word": w['word'],
+                                                       "eng_wn_synsets": {"synsetId": syn['synsetId'],
+                                                                          "synset": syn['synset']}})
+                        if oldw is None:
+                            grc_wn.write(syn['synsetId'] + '\tgrc:lemma\t' + w['word'] + '\n')
+                            db[words_col].update_one({"grc_word": w['word']}, {"$addToSet": {"eng_wn_synsets": syn}}, True)
+                    grc_wn.close()
+                    # db[words_col].update({"grc_word": w["word"]}, {"$set": {"eng_wn_synsets": synsList}, "$push": {"inscrs": {"$each": [new_inscr['phID']]}}}, True)
             client.close()
             return jsonify(str(new_id))
     client.close()
