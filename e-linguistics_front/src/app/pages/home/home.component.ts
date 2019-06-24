@@ -17,8 +17,8 @@ export class HomeComponent implements OnInit {
   englishLemma: FormGroup;
   submitLemma: FormGroup;
   inscriptionForm: FormGroup;
-  result: string[];
-  lemmas: string[];
+  result: string[] = [];
+  lemmas: string[] = [];
   findResults: FindResults[];
   noResults: string;
   words: Word[] = [];
@@ -33,11 +33,11 @@ export class HomeComponent implements OnInit {
 
   formPrepare = {
     inscription_text: ['', Validators.required],
-    phID: 'PH190736',
-    dateFrom: '-340',
-    dateTo: '340',
+    phID: '',
+    dateFrom: '',
+    dateTo: '',
     id_in_publication: '',
-    general_type: 'votive',
+    general_type: '',
     provenance: '',
     bibliography: '',
     words: this.fb.array([])
@@ -63,7 +63,10 @@ export class HomeComponent implements OnInit {
   initForm() {
     this.inscriptionForm = this.fb.group(this.formPrepare);
     this.myForm = this.fb.group({input_text: ['', Validators.required]});
+    this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
     this.englishLemma = this.fb.group({input_text: ['', Validators.required]});
+    this.result = [];
+    this.lemmas = [];
   }
 
   sendTextToBack() {
@@ -83,10 +86,11 @@ export class HomeComponent implements OnInit {
   }
 
   lemmatize(lemma: string) {
-    this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
+    // this.submitLemma = this.fb.group({input_text: ['', Validators.required]});
     this.noResults = '';
     this.perseus_lexicon_HTML = '';
     this.lemmas = [];
+    this.findResults = [];
     this.loading = true;
     this.cltkService.lemmatizeText(lemma).subscribe(
       res => {
@@ -173,6 +177,7 @@ export class HomeComponent implements OnInit {
   }
 
   save() {
+    this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
     if (this.inscriptionForm.valid && !this.disableSave) {
       for (let i = 0; i < this.words.length; i++) {
         this.wordsAsArray.push(this.createWordsField());
@@ -181,13 +186,13 @@ export class HomeComponent implements OnInit {
         }
       }
       this.inscriptionForm.get('words').patchValue(this.words);
-      this.inscriptionForm.get('inscription_text').setValue(this.myForm.get('input_text').value);
 
       this.dbService.postInscription(this.inscriptionForm.value).subscribe(
         res => console.log(res),
         er => console.log(er),
         () => {
-          this.inscriptionForm = this.fb.group(this.formPrepare);
+          this.initForm();
+          this.initWord();
           this.disableSave = true;
         }
       );
