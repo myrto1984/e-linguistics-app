@@ -17,6 +17,7 @@ def tokenize():
         input_text = input_text.replace(',', ' ,')
         input_text = input_text.replace('[', '')
         input_text = input_text.replace(']', '')
+        input_text = input_text.replace(u"\u2014", ' ')
         input_text = input_text.replace('\n', ' ')
         input_text = input_text.replace('\t', ' ')
         input_text = input_text.replace('\r\n', ' ')

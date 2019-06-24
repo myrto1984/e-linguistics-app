@@ -49,7 +49,7 @@ def inscription():
                             grc_wn.write(syn['synsetId'] + '\tgrc:lemma\t' + w['word'] + '\n')
                             db[words_col].update_one({"grc_word": w['word']}, {"$addToSet": {"eng_wn_synsets": syn}}, True)
                     grc_wn.close()
-                    # db[words_col].update({"grc_word": w["word"]}, {"$set": {"eng_wn_synsets": synsList}, "$push": {"inscrs": {"$each": [new_inscr['phID']]}}}, True)
+                    db[words_col].update_one({"grc_word": w["word"]}, {"$push": {"inscrs": {"$each": [new_inscr['phID']]}}})
             client.close()
             return jsonify(str(new_id))
     client.close()
@@ -114,8 +114,8 @@ def getAllWords():
         lim = int(request.args.get('limit'))
     if request.args.get('offset', ''):
         off = int(request.args.get('offset'))
-    if request.args.get('includingIncrs', ''):
-        with_inscrs = (request.args.get('includingIncrs') == 'true')
+    if request.args.get('includingInscrs', ''):
+        with_inscrs = (request.args.get('includingInscrs') == 'true')
 
     if with_inscrs:
         words = list(db[words_col].find({"inscrs": {"$exists": True}}, {"_id": 0, "grc_word": 1, "eng_wn_synsets": 1, "inscrs": 1}).limit(lim).skip(off))
